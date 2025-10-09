@@ -218,54 +218,60 @@
 
             <!-- Slideshow rotator for the floating badges: cycles through role sets every 2500ms -->
             <script>
-              (function(){
-                const sets = [
-                  [
-                    { icon: 'bi-code-slash', label: 'Frontend Developer' },
-                    { icon: 'bi-stack', label: 'Full-Stack Developer' },
-                    { icon: 'bi-palette', label: 'UI/UX Engineer' }
-                  ],
-                  [
-                    { icon: 'bi-phone', label: 'Mobile App Developer' },
-                    { icon: 'bi-server', label: 'DevOps Engineer' },
-                    { icon: 'bi-code-slash', label: 'Software Engineer' }
-                  ],
-                  [
-                    { icon: 'bi-braces', label: 'API Developer' },
-                    { icon: 'bi-gem', label: 'Performance Engineer' },
-                    { icon: 'bi-shield-lock', label: 'SRE / Reliability' }
+            (function(){
+              var sets = [
+                [
+                  { icon: 'bi-code-slash', label: 'Frontend Developer' },
+                  { icon: 'bi-stack', label: 'Full-Stack Developer' },
+                  { icon: 'bi-palette', label: 'UI/UX Engineer' }
+                ],
+                [
+                  { icon: 'bi-phone', label: 'Mobile App Developer' },
+                  { icon: 'bi-server', label: 'DevOps Engineer' },
+                  { icon: 'bi-code-slash', label: 'Software Engineer' }
+                ],
+                [
+                  { icon: 'bi-braces', label: 'API Developer' },
+                  { icon: 'bi-gem', label: 'Performance Engineer' },
+                  { icon: 'bi-shield-lock', label: 'SRE / Reliability' }
+                ]
+              ];
+              
+              var idx = 0;
+              var cardElems = [
+                document.querySelector('.floating-card.card-1'),
+                document.querySelector('.floating-card.card-2'),
+                document.querySelector('.floating-card.card-3')
+              ];
+              
+              function applySet(i) {
+                var set = sets[i % sets.length];
+                if (!set) return;
+                for (var k = 0; k < cardElems.length; k++) {
+                  var card = cardElems[k];
+                  if (!card) continue;
+                  var icon = card.querySelector('i');
+                  var span = card.querySelector('span');
+                  if (icon) {
+                    icon.className = 'bi ' + (set[k] && set[k].icon ? set[k].icon : '');
                   }
-                ];
-                
-                let idx = 0;
-                const cardElems = [
-                  document.querySelector('.floating-card.card-1'),
-                  document.querySelector('.floating-card.card-2'),
-                  document.querySelector('.floating-card.card-3')
-                ];
-                
-                function applySet(i){
-                  const set = sets[i % sets.length];
-                  cardElems.forEach((card, k) => {
-                    if(!card) return;
-                    const icon = card.querySelector('i');
-                    const span = card.querySelector('span');
-                    // update icon classes and label
-                    if(icon){
-                      icon.className = 'bi ' + set[k].icon;
-                    }
-                    if(span){
-                      span.textContent = set[k].label;
-                    }
-                  });
+                  if (span) {
+                    span.textContent = (set[k] && set[k].label) ? set[k].label : '';
+                  }
                 }
-                
-                // initial apply after DOM content is available
-                document.addEventListener('DOMContentLoaded', function(){
-                  applySet(0);
-                  setInterval(function(){ idx++; applySet(idx); }, 2500);
-                });
-              })();
+              }
+              
+              function startRotator() {
+                applySet(0);
+                setInterval(function(){ idx++; applySet(idx); }, 2500);
+              }
+              
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', startRotator);
+              } else {
+                startRotator();
+              }
+            })();
             </script>
                 <span class="tool-name">JavaScript</span>
               </div>
