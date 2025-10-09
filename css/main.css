@@ -183,7 +183,7 @@ body {
 * License: https://bootstrapmade.com/license/
 */
 
-@charset "UTF-8";
+/* @charset removed (must be at very top of the file). If needed, add it as the first line. */
 
 /*--------------------------------------------------------------
 # Font & Color Variables
@@ -874,10 +874,12 @@ section,
 }
 
 @media (max-width: 991px) {
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  line-height: 1.2;
-  white-space: nowrap;
+  .hero .hero-title {
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
 }
 
 @media (max-width: 768px) {
