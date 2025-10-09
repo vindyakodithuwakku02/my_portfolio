@@ -15,6 +15,8 @@
   function toggleScrolled() {
     const selectBody = document.querySelector('body');
     const selectHeader = document.querySelector('#header');
+    // Guard: if header is missing, nothing to do
+    if (!selectHeader) return;
     if (!selectHeader.classList.contains('scroll-up-sticky') && !selectHeader.classList.contains('sticky-top') && !selectHeader.classList.contains('fixed-top')) return;
     window.scrollY > 100 ? selectBody.classList.add('scrolled') : selectBody.classList.remove('scrolled');
   }
@@ -29,10 +31,14 @@
 
   function mobileNavToogle() {
     document.querySelector('body').classList.toggle('mobile-nav-active');
-    mobileNavToggleBtn.classList.toggle('bi-list');
-    mobileNavToggleBtn.classList.toggle('bi-x');
+    if (mobileNavToggleBtn) {
+      mobileNavToggleBtn.classList.toggle('bi-list');
+      mobileNavToggleBtn.classList.toggle('bi-x');
+    }
   }
-  mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
+  if (mobileNavToggleBtn) {
+    mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
+  }
 
   /**
    * Hide mobile nav on same-page/hash links
@@ -43,7 +49,6 @@
         mobileNavToogle();
       }
     });
-
   });
 
   /**
@@ -78,13 +83,15 @@
       window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
     }
   }
-  scrollTop.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
+  if (scrollTop) {
+    scrollTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     });
-  });
+  }
 
   window.addEventListener('load', toggleScrollTop);
   document.addEventListener('scroll', toggleScrollTop);
@@ -106,46 +113,58 @@
    * Init typed.js
    */
   const selectTyped = document.querySelector('.typed');
-  if (selectTyped) {
-    let typed_strings = selectTyped.getAttribute('data-typed-items');
-    typed_strings = typed_strings.split(',');
-    new Typed('.typed', {
-      strings: typed_strings,
-      loop: true,
-      typeSpeed: 100,
-      backSpeed: 50,
-      backDelay: 2000
-    });
+  if (selectTyped && typeof Typed !== 'undefined') {
+    try {
+      let typed_strings = selectTyped.getAttribute('data-typed-items') || '';
+      typed_strings = typed_strings.split(',');
+      new Typed('.typed', {
+        strings: typed_strings,
+        loop: true,
+        typeSpeed: 100,
+        backSpeed: 50,
+        backDelay: 2000
+      });
+    } catch (e) {
+      console.warn('Typed initialization failed:', e);
+    }
   }
 
   /**
    * Initiate Pure Counter
    */
-  new PureCounter();
+  if (typeof PureCounter !== 'undefined') {
+    try { new PureCounter(); } catch (e) { console.warn('PureCounter init failed', e); }
+  }
 
   /**
    * Animate the skills items on reveal
    */
   let skillsAnimation = document.querySelectorAll('.skills-animation');
-  skillsAnimation.forEach((item) => {
-    new Waypoint({
-      element: item,
-      offset: '80%',
-      handler: function(direction) {
-        let progress = item.querySelectorAll('.progress .progress-bar');
-        progress.forEach(el => {
-          el.style.width = el.getAttribute('aria-valuenow') + '%';
+  if (typeof Waypoint !== 'undefined') {
+    skillsAnimation.forEach((item) => {
+      try {
+        new Waypoint({
+          element: item,
+          offset: '80%',
+          handler: function(direction) {
+            let progress = item.querySelectorAll('.progress .progress-bar');
+            progress.forEach(el => {
+              el.style.width = el.getAttribute('aria-valuenow') + '%';
+            });
+          }
         });
-      }
+      } catch (e) { console.warn('Waypoint init failed for item', e); }
     });
-  });
+  }
 
   /**
    * Initiate glightbox
    */
-  const glightbox = GLightbox({
-    selector: '.glightbox'
-  });
+  if (typeof GLightbox !== 'undefined') {
+    try {
+      const glightbox = GLightbox({ selector: '.glightbox' });
+    } catch (e) { console.warn('GLightbox init failed', e); }
+  }
 
   /**
    * Init isotope layout and filters
@@ -156,14 +175,20 @@
     let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
 
     let initIsotope;
-    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
-      initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
-        itemSelector: '.isotope-item',
-        layoutMode: layout,
-        filter: filter,
-        sortBy: sort
-      });
-    });
+    if (typeof imagesLoaded !== 'undefined' && typeof Isotope !== 'undefined') {
+      try {
+        imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
+          try {
+            initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
+              itemSelector: '.isotope-item',
+              layoutMode: layout,
+              filter: filter,
+              sortBy: sort
+            });
+          } catch (e) { console.warn('Isotope init failed', e); }
+        });
+      } catch (e) { console.warn('imagesLoaded/isotope error', e); }
+    }
 
     isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
       filters.addEventListener('click', function() {
@@ -184,16 +209,25 @@
    * Init swiper sliders
    */
   function initSwiper() {
+    if (typeof Swiper === 'undefined') return;
     document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
-      let config = JSON.parse(
-        swiperElement.querySelector(".swiper-config").innerHTML.trim()
-      );
-
-      if (swiperElement.classList.contains("swiper-tab")) {
-        initSwiperWithCustomPagination(swiperElement, config);
-      } else {
-        new Swiper(swiperElement, config);
+      let config = null;
+      try {
+        const cfgEl = swiperElement.querySelector(".swiper-config");
+        if (!cfgEl) throw new Error('swiper-config element not found');
+        config = JSON.parse(cfgEl.innerHTML.trim());
+      } catch (e) {
+        console.warn('Skipping swiper init due to invalid config:', e);
+        return;
       }
+
+      try {
+        if (swiperElement.classList.contains("swiper-tab")) {
+          initSwiperWithCustomPagination(swiperElement, config);
+        } else {
+          new Swiper(swiperElement, config);
+        }
+      } catch (e) { console.warn('Swiper init failed', e); }
     });
   }
 
