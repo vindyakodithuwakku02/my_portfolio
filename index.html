@@ -1064,9 +1064,16 @@
           <h3>Let’s Get in Touch</h3>
           <p>I usually respond within 24 hours — let’s turn ideas into impact together.</p>
 
-          <form id="contact-form" class="php-email-form"
-                action="https://api.web3forms.com/submit" method="POST" data-aos="fade-up" data-aos-delay="200">
-            <input type="hidden" name="access_key" value="adfde21b-78aa-4a3c-8977-13e2b42f1022">
+          <form id="contact-form" class="php-email-form" action="https://api.web3forms.com/submit" method="POST" data-aos="fade-up" data-aos-delay="200">
+            
+            <!-- 🔑 Web3Forms Access Key -->
+            <input type="hidden" name="access_key" value="f0be38c6-ee72-4f06-8658-99dde5af6ac4">
+            
+            <!-- ✅ Recommended extra fields -->
+            <input type="hidden" name="from_name" value="Portfolio Contact Form">
+            <input type="hidden" name="subject" value="Portfolio Contact — {{name}}">
+            <input type="hidden" name="replyto" value="{{email}}">
+            <input type="checkbox" name="botcheck" class="d-none" tabindex="-1" autocomplete="off">
 
             <div class="row gy-4">
               <div class="col-md-6">
@@ -1076,7 +1083,7 @@
                 <input type="email" name="email" class="form-control" placeholder="Your Email" required>
               </div>
               <div class="col-12">
-                <input type="text" name="subject" class="form-control" placeholder="Subject" required>
+                <input type="text" name="user_subject" class="form-control" placeholder="Subject" required>
               </div>
               <div class="col-12">
                 <textarea name="message" rows="6" class="form-control" placeholder="Message" required></textarea>
@@ -1097,6 +1104,7 @@
 </section>
 <!-- /Contact Section -->
 
+
 <!-- Footer -->
 <footer id="footer" class="footer dark-background">
   <div class="container">
@@ -1113,10 +1121,12 @@
   </div>
 </footer>
 
+
 <!-- Scroll Top -->
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
   <i class="bi bi-arrow-up-short"></i>
 </a>
+
 
 <!-- Vendor JS Files -->
 <script src="js/bootstrap.bundle.min.js"></script>
@@ -1131,7 +1141,7 @@
 <!-- Main JS File -->
 <script src="js/main.js"></script>
 
-<!-- Fixed Web3Forms Logic -->
+<!-- ✅ Final Fixed Web3Forms Logic -->
 <script>
 document.getElementById('contact-form').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -1158,7 +1168,6 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
       sentMsg.style.display = 'block';
       errorMsg.style.display = 'none';
       form.reset();
-      // Auto fade-out success message
       setTimeout(() => { sentMsg.style.display = 'none'; }, 4000);
     } else {
       errorMsg.textContent = 'Failed to send message. Please try again.';
@@ -1174,7 +1183,5 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
   });
 });
 </script>
-
-
 
 </body></html>
